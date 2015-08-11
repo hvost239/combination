@@ -16,7 +16,7 @@ TEST_F(SimpleCnkTest, PascalTriangle){
 	ASSERT_EQ(solver(1, 1), 1);
 
 	ASSERT_EQ(solver(12, 8), 495);
-	ASSERT_EQ(solver(14, 5), 2002);
+	ASSERT_EQ(solver(14, 5), 2002);	
 }
 
 
