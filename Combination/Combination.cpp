@@ -8,6 +8,9 @@
 #include <iostream>
 #include <boost\multiprecision\cpp_int.hpp>
 
+
+
+typedef boost::multiprecision::cpp_int T;
 int _tmain(int argc, char* argv[])
 {	
 	if (argc < 3){
@@ -16,10 +19,10 @@ int _tmain(int argc, char* argv[])
 	}
 
 	try{
-		boost::multiprecision::cpp_int n = boost::lexical_cast<boost::multiprecision::cpp_int>(argv[1]);
-		boost::multiprecision::cpp_int k = boost::lexical_cast<boost::multiprecision::cpp_int>(argv[2]);
+		T n = boost::lexical_cast<T>(argv[1]);
+		T k = boost::lexical_cast<T>(argv[2]);
 
-		MultiThreadCnkSolver<boost::multiprecision::cpp_int> solver(2);
+		MultiThreadCnkSolver<T> solver(1);
 
 		auto result = solver(n, k);
 		std::cout << result;

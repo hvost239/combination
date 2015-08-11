@@ -42,31 +42,36 @@ private:
 	T calc(const T& n, const T& k){
 		if (k == 0 || n == k)
 			return 1;		
+					
+		int thread_count = (n > max_thread_count_) 
+								? max_thread_count_
+								: static_cast<int>(n);
+			
+		T result = 0;
+		std::vector<std::pair<std::future<T>, int>> workers;
 
-		std::function<T (const T&, const T&)> calcFunction=
-			[](const T& _n, const T& _k){
-				if (_n < 0 || _k < 0)
-					return static_cast<T>(0);
+		SimpleCnk<int> coeffSolver;
 
-				return SimpleCnk<T>()(_n, _k); 
-			};
-		
-		if (max_thread_count_ == 1){
-			return calcFunction(n, k);
+		T tN = n - max_thread_count_ + 1;
+		for (int i = 0; i < max_thread_count_; ++i){
+			int coeff = coeffSolver(max_thread_count_ - 1, i);
+			T tK = k - i;
+			workers.push_back(
+				std::make_pair(
+					std::async(std::launch::async, SimpleCalc, tN, tK),
+					coeff));
 		}
-		else{
 
-			// Пока только на два потока.
-			T result = 0;
-			std::vector<std::future<T>> workers;
-
-			workers.push_back(std::async(std::launch::async, calcFunction, n - 1, k));
-			workers.push_back(std::async(std::launch::async, calcFunction, n - 1, k - 1));
-
-			for (auto & w : workers){
-				result += w.get();
-			}
-			return result;
+		for (auto & w : workers){
+			result += w.first.get() * w.second;
 		}
+		return result;
+	}
+
+	static T SimpleCalc(const T& n, const T& k) {
+		if (n < 0 || k < 0)
+			return static_cast<T>(0);
+
+		return SimpleCnk<T>()(n, k);
 	}
 };
