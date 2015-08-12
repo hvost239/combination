@@ -13,16 +13,16 @@
 template<class T>
 class MultiThreadCnkSolver : std::binary_function < const T&, const T&, T > {
 private:
-	int max_thread_count_;
+	unsigned int max_thread_count_;
 	
 public:
-	MultiThreadCnkSolver(int maxThreadCount){
+	MultiThreadCnkSolver(unsigned int maxThreadCount){
 		SetMaxThreadCount(maxThreadCount);
 	}
 
 	T operator()(const T& n, const T& k){
 		if (n < 0 || k < 0 || k > n)
-			throw std::invalid_argument("bad argument");
+			throw std::invalid_argument("Bad argument. N and k must me more then 0, k <= n");
 
 		return calc(n, k);
 	}
@@ -43,23 +43,26 @@ private:
 		if (k == 0 || n == k)
 			return 1;		
 					
-		int thread_count = (n > max_thread_count_) 
+		unsigned int thread_count = (n > max_thread_count_) 
 								? max_thread_count_
-								: static_cast<int>(n);
+								: static_cast<unsigned int>(n);
 			
 		T result = 0;
-		std::vector<std::pair<std::future<T>, int>> workers;
+		std::vector<std::pair<std::future<T>, unsigned int>> workers;
 
-		SimpleCnk<int> coeffSolver;
+		SimpleCnk<unsigned int> coeffSolver;
 
-		T tN = n - max_thread_count_ + 1;
-		for (int i = 0; i < max_thread_count_; ++i){
-			int coeff = coeffSolver(max_thread_count_ - 1, i);
+		T tN = n - thread_count + 1;
+		for (unsigned int i = 0; i < thread_count; ++i){
+			unsigned int coeff = coeffSolver(thread_count - 1, i);
 			T tK = k - i;
+			// Возможна оптимизация: рассматривать ситуация когда tk может быть меньше 0 - уменьшать tn, добавась полезной нагрузки по максимальному количесту потоков
+			
 			workers.push_back(
-				std::make_pair(
+					std::make_pair(
 					std::async(std::launch::async, SimpleCalc, tN, tK),
 					coeff));
+			
 		}
 
 		for (auto & w : workers){
@@ -69,7 +72,7 @@ private:
 	}
 
 	static T SimpleCalc(const T& n, const T& k) {
-		if (n < 0 || k < 0)
+		if (n < 0 || k < 0 ||  k > n)
 			return static_cast<T>(0);
 
 		return SimpleCnk<T>()(n, k);

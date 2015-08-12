@@ -5,8 +5,11 @@
 template<class T>
 class SimpleCnk : std::binary_function < const T&, const T&, T > {
 private:
-	T MultRange(const T& begin, const T& end = 1){
 
+	/*
+		begin * (begin - 1) * (begin - 2) * ... * end
+	*/
+	T MultRange(const T& begin, const T& end = 1){
 		T result = 1;
 		for (T it = begin; it >= end; --it){
 			result *= it;

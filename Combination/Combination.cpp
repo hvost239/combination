@@ -11,10 +11,11 @@
 
 
 typedef boost::multiprecision::cpp_int T;
+
 int _tmain(int argc, char* argv[])
 {	
 	if (argc < 3){
-		std::cout << "Not enoug input params";
+		std::cout << "Not enough input params";
 		return -1;
 	}
 
@@ -22,7 +23,7 @@ int _tmain(int argc, char* argv[])
 		T n = boost::lexical_cast<T>(argv[1]);
 		T k = boost::lexical_cast<T>(argv[2]);
 
-		MultiThreadCnkSolver<T> solver(1);
+		MultiThreadCnkSolver<T> solver(256);
 
 		auto result = solver(n, k);
 		std::cout << result;

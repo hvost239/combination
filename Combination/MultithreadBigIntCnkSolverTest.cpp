@@ -37,13 +37,31 @@ TEST_P(MultithreadBinIntCnkSoverTest, BigIntTest){
 
 
 	SimpleCnk<boost::multiprecision::cpp_int> simpleSolver;
-	MultiThreadCnkSolver<boost::multiprecision::cpp_int> solver(4);
+	MultiThreadCnkSolver<boost::multiprecision::cpp_int> solver(GetParam());
 
 	for (auto& nk : datas){
 		ASSERT_EQ(solver(nk.first, nk.second), simpleSolver(nk.first, nk.second));
 	}
 }
 
-INSTANTIATE_TEST_CASE_P(AnyThreadCountTest, MultithreadBinIntCnkSoverTest, ::testing::Values(1, 2, 8, 256));
+TEST_P(MultithreadBinIntCnkSoverTest, SmallIntTest){
+	std::pair<boost::multiprecision::cpp_int, boost::multiprecision::cpp_int> datas[] = {
+		std::make_pair(1, 0),
+		std::make_pair(2, 1),
+		std::make_pair(3, 2),
+		std::make_pair(0, 0)
+	};
+
+
+	SimpleCnk<boost::multiprecision::cpp_int> simpleSolver;
+	MultiThreadCnkSolver<boost::multiprecision::cpp_int> solver(GetParam());
+
+	for (auto& nk : datas){
+		ASSERT_EQ(solver(nk.first, nk.second), simpleSolver(nk.first, nk.second));
+	}
+}
+
+INSTANTIATE_TEST_CASE_P(AnyThreadCountTest, MultithreadBinIntCnkSoverTest, ::testing::Values(1, 3, 7, 16));
+
 
 	
