@@ -23,7 +23,7 @@ int _tmain(int argc, char* argv[])
 		T n = boost::lexical_cast<T>(argv[1]);
 		T k = boost::lexical_cast<T>(argv[2]);
 
-		MultiThreadCnkSolver<T> solver(256);
+		MultiThreadCnkSolver<T> solver(2);
 
 		auto result = solver(n, k);
 		std::cout << result;
